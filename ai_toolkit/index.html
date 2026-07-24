@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Toolkit — Free AI Writing Tools</title>
+<meta name="description" content="Free AI-powered writing tools: rewrite, summarize, fix grammar, and generate SEO meta tags. No sign-up required.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh;line-height:1.6}
+header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:2rem 1rem 1.5rem;text-align:center}
+header h1{font-size:1.8rem;font-weight:700;margin-bottom:.25rem}
+header p{opacity:.85;font-size:.95rem;max-width:600px;margin:0 auto}
+.container{max-width:800px;margin:0 auto;padding:1rem}
+.tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap;justify-content:center}
+.tab{padding:.6rem 1.2rem;border:none;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:500;background:#fff;color:#555;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.tab:hover{background:#f8f9ff;color:#667eea}
+.tab.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;box-shadow:0 4px 12px rgba(102,126,234,.35)}
+.tab .icon{font-size:1.1rem}
+.card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:1rem}
+.card h2{font-size:1.15rem;margin-bottom:.8rem;color:#333;display:flex;align-items:center;gap:.5rem}
+.options{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.opt-btn{padding:.35rem .9rem;border:2px solid #e0e0e0;border-radius:20px;cursor:pointer;font-size:.82rem;background:#fff;color:#666;transition:all .15s}
+.opt-btn:hover{border-color:#667eea;color:#667eea}
+.opt-btn.active{border-color:#667eea;background:#667eea;color:#fff}
+textarea{width:100%;min-height:180px;padding:.9rem;border:2px solid #e0e0e0;border-radius:10px;font-size:.92rem;resize:vertical;font-family:inherit;transition:border-color .2s;line-height:1.5}
+textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+.char-count{text-align:right;font-size:.78rem;color:#999;margin-top:.3rem}
+.char-count.warn{color:#e74c3c}
+.btn-row{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
+.btn{padding:.65rem 1.5rem;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;box-shadow:0 4px 12px rgba(102,126,234,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(102,126,234,.4)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-secondary{background:#f0f2f5;color:#555}
+.btn-secondary:hover{background:#e4e6eb}
+.output-area{min-height:120px;padding:.9rem;background:#f8f9ff;border-radius:10px;border:2px solid #e8eaf6;font-size:.92rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin-top:.5rem}
+.output-area.empty{color:#bbb;font-style:italic}
+.error-msg{color:#e74c3c;font-size:.85rem;margin-top:.5rem;padding:.5rem;background:#fff5f5;border-radius:8px;display:none}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:.6rem 1.2rem;border-radius:8px;font-size:.85rem;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.api-error{background:#fff5f5;border:1px solid #fecaca;color:#b91c1c;padding:.8rem;border-radius:8px;margin-top:.8rem;font-size:.85rem;display:none}
+footer{text-align:center;padding:2rem 1rem;color:#999;font-size:.8rem}
+footer a{color:#667eea}
+@media(max-width:600px){header h1{font-size:1.4rem}.tabs{gap:.3rem}.tab{padding:.5rem .8rem;font-size:.8rem}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🪄 AI Toolkit</h1>
+  <p>Free AI-powered writing tools — no sign-up, no limits (within reason). Rewrite, summarize, fix grammar, and more.</p>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" data-tool="rewrite"><span class="icon">✍️</span> Rewrite</button>
+    <button class="tab" data-tool="summarize"><span class="icon">📝</span> Summarize</button>
+    <button class="tab" data-tool="grammar"><span class="icon">🔧</span> Fix Grammar</button>
+    <button class="tab" data-tool="seo"><span class="icon">🎯</span> SEO Meta</button>
+  </div>
+
+  <div class="card" id="tool-card">
+    <!-- Dynamic content per tool -->
+  </div>
+</div>
+
+<footer>
+  <p>Powered by <a href="https://deepseek.com" target="_blank">DeepSeek AI</a> · 100% free · No data stored</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// === CONFIGURATION ===
+// Change this to your deployed Cloudflare Worker URL
+const API_URL = 'https://YOUR_WORKER.YOUR_SUBDOMAIN.workers.dev';
+
+// === STATE ===
+let currentTool = 'rewrite';
+let isLoading = false;
+
+// === TOOL CONFIG ===
+const toolConfig = {
+  rewrite: {
+    title: '✍️ AI Rewriter',
+    subtitle: 'Paraphrase and improve your text with AI',
+    options: [
+      { key: 'style', value: 'standard', label: 'Standard' },
+      { key: 'style', value: 'formal', label: 'Formal' },
+      { key: 'style', value: 'casual', label: 'Casual' },
+      { key: 'style', value: 'creative', label: 'Creative' }
+    ],
+    placeholder: 'Paste text to rewrite...',
+    buttonText: 'Rewrite Text'
+  },
+  summarize: {
+    title: '📝 AI Summarizer',
+    subtitle: 'Condense long text into key points',
+    options: [
+      { key: 'length', value: 'short', label: 'Short' },
+      { key: 'length', value: 'medium', label: 'Medium' },
+      { key: 'length', value: 'detailed', label: 'Detailed' }
+    ],
+    placeholder: 'Paste text to summarize...',
+    buttonText: 'Summarize'
+  },
+  grammar: {
+    title: '🔧 Grammar & Style Fixer',
+    subtitle: 'Fix spelling, grammar, and punctuation errors',
+    options: [],
+    placeholder: 'Paste text to fix...',
+    buttonText: 'Fix Grammar'
+  },
+  seo: {
+    title: '🎯 SEO Meta Generator',
+    subtitle: 'Generate SEO-optimized title tags and meta descriptions',
+    options: [],
+    placeholder: 'Paste your content to generate SEO meta tags...',
+    buttonText: 'Generate SEO Tags',
+    extra: true // has keyword input
+  }
+};
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+  // Tab clicks
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentTool = tab.dataset.tool;
+      renderTool();
+    });
+  });
+  renderTool();
+});
+
+function renderTool() {
+  const cfg = toolConfig[currentTool];
+  const card = document.getElementById('tool-card');
+  
+  let optionsHtml = '';
+  if (cfg.options.length > 0) {
+    optionsHtml = '<div class="options">' + cfg.options.map((o, i) => 
+      `<button class="opt-btn${i===0?' active':''}" data-opt="${o.value}">${o.label}</button>`
+    ).join('') + '</div>';
+  }
+
+  let extraHtml = '';
+  if (cfg.extra) {
+    extraHtml = '<div style="margin-bottom:1rem"><input type="text" id="seo-keyword" placeholder="Target keyword (optional)" style="width:100%;padding:.6rem .9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:.9rem;font-family:inherit" maxlength="100"></div>';
+  }
+
+  card.innerHTML = `
+    <h2>${cfg.title}</h2>
+    <p style="color:#888;font-size:.85rem;margin-bottom:.8rem">${cfg.subtitle}</p>
+    ${optionsHtml}
+    ${extraHtml}
+    <textarea id="input-text" placeholder="${cfg.placeholder}" maxlength="10000"></textarea>
+    <div class="char-count" id="char-count">0 / 10,000</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="action-btn">${cfg.buttonText}</button>
+      <button class="btn btn-secondary" id="clear-btn">Clear</button>
+    </div>
+    <div class="api-error" id="api-error"></div>
+    <div id="output-section" style="display:none;margin-top:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+        <span style="font-weight:600;font-size:.9rem;color:#555">📋 Result</span>
+        <button class="btn btn-secondary" id="copy-btn" style="font-size:.8rem;padding:.35rem .8rem">📋 Copy</button>
+      </div>
+      <div class="output-area" id="output-area"></div>
+    </div>
+  `;
+
+  // Bind events
+  const textarea = document.getElementById('input-text');
+  const charCount = document.getElementById('char-count');
+  const actionBtn = document.getElementById('action-btn');
+  const clearBtn = document.getElementById('clear-btn');
+
+  textarea.addEventListener('input', () => {
+    const len = textarea.value.length;
+    charCount.textContent = `${len} / 10,000`;
+    charCount.className = 'char-count' + (len > 9000 ? ' warn' : '');
+  });
+
+  actionBtn.addEventListener('click', () => handleAction());
+  clearBtn.addEventListener('click', () => {
+    textarea.value = '';
+    charCount.textContent = '0 / 10,000';
+    charCount.className = 'char-count';
+    document.getElementById('output-section').style.display = 'none';
+    document.getElementById('api-error').style.display = 'none';
+  });
+
+  // Option buttons
+  document.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Enter key submit
+  textarea.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') handleAction();
+  });
+
+  // Copy button
+  document.getElementById('copy-btn')?.addEventListener('click', () => {
+    const output = document.getElementById('output-area').textContent;
+    navigator.clipboard.writeText(output).then(() => showToast('Copied! ✅'));
+  });
+}
+
+async function handleAction() {
+  if (isLoading) return;
+  
+  const textarea = document.getElementById('input-text');
+  const text = textarea.value.trim();
+  const apiError = document.getElementById('api-error');
+  const outputSection = document.getElementById('output-section');
+  
+  apiError.style.display = 'none';
+  
+  if (!text) {
+    apiError.textContent = 'Please enter some text first.';
+    apiError.style.display = 'block';
+    return;
+  }
+
+  // Determine options
+  let options = {};
+  if (currentTool === 'rewrite') {
+    const activeBtn = document.querySelector('.opt-btn.active');
+    options.style = activeBtn ? activeBtn.dataset.opt : 'standard';
+  } else if (currentTool === 'summarize') {
+    const activeBtn = document.querySelector('.opt-btn.active');
+    options.length = activeBtn ? activeBtn.dataset.opt : 'medium';
+  } else if (currentTool === 'seo') {
+    const kw = document.getElementById('seo-keyword')?.value?.trim();
+    if (kw) options.keyword = kw;
+  }
+
+  // Loading state
+  isLoading = true;
+  const actionBtn = document.getElementById('action-btn');
+  actionBtn.disabled = true;
+  actionBtn.innerHTML = '<span class="spinner"></span> Processing...';
+
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tool: currentTool, text, options })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || `API error (${response.status})`);
+    }
+
+    // Display result
+    outputSection.style.display = 'block';
+    const outputArea = document.getElementById('output-area');
+    
+    // Handle SEO JSON result
+    if (currentTool === 'seo') {
+      try {
+        const seo = JSON.parse(data.result);
+        outputArea.innerHTML = `<strong>Title:</strong> ${escapeHtml(seo.title||'')}<br><br><strong>Description:</strong> ${escapeHtml(seo.description||'')}`;
+        outputArea.className = 'output-area';
+      } catch {
+        outputArea.textContent = data.result;
+        outputArea.className = 'output-area';
+      }
+    } else {
+      outputArea.textContent = data.result;
+      outputArea.className = 'output-area';
+    }
+
+  } catch (error) {
+    apiError.textContent = `Error: ${error.message}`;
+    apiError.style.display = 'block';
+    outputSection.style.display = 'none';
+  } finally {
+    isLoading = false;
+    actionBtn.disabled = false;
+    actionBtn.innerHTML = toolConfig[currentTool].buttonText;
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>

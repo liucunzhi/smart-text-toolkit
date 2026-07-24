@@ -1,0 +1,8 @@
+# 账号凭据 - 已注册，直接登录（无需注册）
+# 平台：RapidAPI / Render 等
+
+email: liucunzhi@foxmail.com
+password: 09403211Jk@
+
+注意：以上账号已由用户手动注册完成！请直接用此账号**登录**平台，
+无需重新注册。登录后直接上架API产品和数字产品。
